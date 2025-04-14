@@ -7,9 +7,21 @@ const mantras = {
     sanskrit: 'श्री स्वामी समर्थ',
     english: 'Shree Swami Samarth'
   },
-  'Jay Shani Dev': {
-    sanskrit: 'जय शनि देव',
-    english: 'Jay Shani Dev'
+  'Om Sham Shanicharaya Namah': {
+    sanskrit: 'ॐ शं शनैश्चराय नमः',
+    english: 'Om Sham Shanicharaya Namah'
+  },
+  'ॐ मंगलाय नमः' : {
+    sanskrit: 'ॐ मंगलाय नमः',
+    english: 'ॐ मंगलाय नमः'
+  },
+  'ॐ रां राहवे नमः:': {
+    sanskrit: 'ॐ रां राहवे नमः',
+    english: 'ॐ रां राहवे नमः'
+  },
+  'ॐ क्र केतवे नमः': {
+    sanskrit: 'ॐ क्र केतवे नमः',
+    english: 'ॐ क्र केतवे नमः'
   },
   'Jay Shree Ram': {
     sanskrit: 'जय श्री राम',
@@ -26,6 +38,10 @@ const mantras = {
   'Shree Ganeshaay Namah': {
     sanskrit: 'श्री गणेशाय नमः',
     english: 'Shree Ganeshaay Namah'
+  },
+  'Dattaguru': {
+    sanskrit: 'दत्तगुरु',
+    english: 'Dattaguru'
   },
   'Om Dum Durgaay Namaha': {
     sanskrit: 'ॐ दुं दुर्गाय नमः',
@@ -62,10 +78,13 @@ function LanguageSelect() {
   return (
     <Container maxWidth="sm">
       <Box sx={{ py: 4 }}>
-        <Typography variant="h4" gutterBottom align="center">
-          Select Mantra & Language
+        <Typography variant="h4" gutterBottom align="center" sx={{ color: '#ff9100' }}>
+          Ichapurti Shani Mandir
         </Typography>
-        <Paper sx={{ p: 4, mt: 4 }}>
+        <Typography variant="h6" gutterBottom align="center" sx={{ color: '#000000' }}>
+          Shree Shani Shingnapur Maharaj Mandir Nallasopara West
+        </Typography>
+        <Paper sx={{ p: 4, mt: 4, bgcolor: '#ffffff' }}>
           <FormControl fullWidth sx={{ mb: 3 }}>
             <InputLabel>Select Mantra</InputLabel>
             <Select

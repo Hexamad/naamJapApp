@@ -1,0 +1,15 @@
+{
+  "short_name": "Naam Jap",
+  "name": "Ichapurti Shani Mandir Naam Jap",
+  "icons": [
+    {
+      "src": "vite.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#ff9100",
+  "background_color": "#ffffff"
+}

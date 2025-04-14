@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Container, TextField, Button, Typography, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+// Add to imports
+import { Link } from '@mui/material';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -26,8 +28,11 @@ function Login() {
     <Container maxWidth="sm">
       <Box sx={{ py: 4 }}>
         <Paper sx={{ p: 4, mt: 4 }}>
-          <Typography variant="h4" gutterBottom align="center">
-            Login
+          <Typography variant="h4" gutterBottom align="center" sx={{ color: '#ff9100' }}>
+            Ichapurti Shani Mandir
+          </Typography>
+          <Typography variant="h6" gutterBottom align="center" sx={{ color: '#000000' }}>
+            Shree Shani Shingnapur Maharaj Mandir Nallasopara West
           </Typography>
           <form onSubmit={handleLogin}>
             <TextField
@@ -55,6 +60,11 @@ function Login() {
             >
               Login
             </Button>
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Link href="/register" underline="hover">
+                Don't have an account? Register
+              </Link>
+            </Box>
           </form>
         </Paper>
       </Box>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 
 // Pages
@@ -8,64 +7,30 @@ import AdminDashboard from './pages/AdminDashboard';
 import UserDashboard from './pages/UserDashboard';
 import NaamJap from './pages/NaamJap';
 import Progress from './pages/Progress';
-
-// Add this import at the top
 import LanguageSelect from './pages/LanguageSelect';
+import Register from './pages/Register';
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#4a148c',
-    },
-    secondary: {
-      main: '#ff9100',
-    },
-  },
-});
+import { 
+  Route,
+  createRoutesFromElements,
+  createBrowserRouter,
+  RouterProvider 
+} from 'react-router-dom';
 
-function PrivateRoute({ children }) {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  return isLoggedIn ? children : <Navigate to="/login" />;
-}
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/">
+      <Route index element={<NaamJap />} />
+      <Route path="register" element={<Register />} />
+      <Route path="login" element={<Login />} />
+      <Route path="select-language" element={<NaamJap />} />
+      <Route path="progress" element={<Progress />} />
+    </Route>
+  )
+);
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  return (
-    <BrowserRouter>
-      <ThemeProvider theme={theme}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route
-            path="/select-language"
-            element={
-              <PrivateRoute>
-                <LanguageSelect />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/naamjap"
-            element={
-              <PrivateRoute>
-                <NaamJap />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/" element={<Navigate to="/login" />} />
-          <Route
-            path="/progress"
-            element={
-              <PrivateRoute>
-                <Progress />
-              </PrivateRoute>
-            }
-          />
-        </Routes>
-      </ThemeProvider>
-    </BrowserRouter>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
