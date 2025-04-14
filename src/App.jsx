@@ -32,6 +32,9 @@ const router = createBrowserRouter(
       <Route path="progress" element={
         localStorage.getItem('token') ? <Progress /> : <Navigate to="/login" />
       } />
+      <Route path="naamjap" element={
+        localStorage.getItem('token') ? <NaamJap /> : <Navigate to="/login" />
+      } />
     </Route>
   )
 );

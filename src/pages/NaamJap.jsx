@@ -70,9 +70,17 @@ function NaamJap() {
     }
   }, [count, mantraText]);
 
-  const handlePause = () => {
-    setIsPaused(true);
-    navigate('/progress');
+  const handlePause = async () => {
+    try {
+      await progress.updateProgress({
+        mantraName: mantraText,
+        count: count
+      });
+      setIsPaused(true);
+      navigate('/progress');
+    } catch (error) {
+      console.error('Failed to save progress:', error);
+    }
   };
 
   const handleChangeMantra = () => {
