@@ -1,45 +1,52 @@
 import React, { useState } from 'react';
 import { Box, Container, TextField, Button, Typography, Paper } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-// Add to imports
-import { Link } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { auth } from '../services/api';
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const devEmail = getComputedStyle(document.documentElement).getPropertyValue('--dev-email').replace(/'/g, '').trim();
-    const devPassword = getComputedStyle(document.documentElement).getPropertyValue('--dev-password').replace(/'/g, '').trim();
-
-    // In the handleLogin function
-    if (email === devEmail && password === devPassword) {
-      localStorage.setItem('isLoggedIn', 'true');
-      navigate('/select-language');  // Changed from '/naamjap'
-    }
-    else {
-      alert('Invalid credentials');
+    try {
+      const { data } = await auth.login(formData);
+      localStorage.setItem('token', data.token);
+      navigate('/select-language');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Login failed');
     }
   };
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ py: 4 }}>
+        <Typography 
+          variant="h4" 
+          gutterBottom 
+          align="center"
+          sx={{ 
+            color: '#ff9100',
+            fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
+          }}
+        >
+          Ichapurti Shani Mandir
+        </Typography>
+
         <Paper sx={{ p: 4, mt: 4 }}>
-          <Typography variant="h4" gutterBottom align="center" sx={{ color: '#ff9100' }}>
-            Ichapurti Shani Mandir
+          <Typography variant="h5" gutterBottom align="center">
+            Login
           </Typography>
-          <Typography variant="h6" gutterBottom align="center" sx={{ color: '#000000' }}>
-            Shree Shani Shingnapur Maharaj Mandir Nallasopara West
-          </Typography>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
               label="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({...formData, email: e.target.value})}
               margin="normal"
               required
             />
@@ -47,8 +54,8 @@ function Login() {
               fullWidth
               label="Password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={formData.password}
+              onChange={(e) => setFormData({...formData, password: e.target.value})}
               margin="normal"
               required
             />
@@ -61,7 +68,7 @@ function Login() {
               Login
             </Button>
             <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Link href="/register" underline="hover">
+              <Link to="/register" style={{ textDecoration: 'none', color: '#1976d2' }}>
                 Don't have an account? Register
               </Link>
             </Box>

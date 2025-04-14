@@ -14,17 +14,24 @@ import {
   Route,
   createRoutesFromElements,
   createBrowserRouter,
-  RouterProvider 
+  RouterProvider,
+  Navigate
 } from 'react-router-dom';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/">
-      <Route index element={<NaamJap />} />
+      <Route index element={
+        localStorage.getItem('token') ? <NaamJap /> : <Navigate to="/login" />
+      } />
       <Route path="register" element={<Register />} />
       <Route path="login" element={<Login />} />
-      <Route path="select-language" element={<NaamJap />} />
-      <Route path="progress" element={<Progress />} />
+      <Route path="select-language" element={
+        localStorage.getItem('token') ? <LanguageSelect /> : <Navigate to="/login" />
+      } />
+      <Route path="progress" element={
+        localStorage.getItem('token') ? <Progress /> : <Navigate to="/login" />
+      } />
     </Route>
   )
 );
