@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://https://ichapurtishani.netlify.app/api'  // Replace with your actual domain
+  ? 'https://ichapurtishani.netlify.app/api'  // Replace with your actual domain
   : 'http://localhost:5000/api';
 
 const api = axios.create({
