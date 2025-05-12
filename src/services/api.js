@@ -1,34 +1,55 @@
-import axios from 'axios';
-
-const API_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://ichapurtishani.netlify.app/api'  // Replace with your actual domain
-  : 'http://localhost:5000/api';
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-// Add token to requests
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import { supabase } from './supabase'
 
 export const auth = {
-  register: (userData) => api.post('/auth/register', userData),
-  login: (credentials) => api.post('/auth/login', credentials),
-  getProfile: () => api.get('/auth/profile')
-};
+  register: async (userData) => {
+    const { data, error } = await supabase.auth.signUp({
+      email: userData.email,
+      password: userData.password,
+      options: {
+        data: {
+          name: userData.name
+        }
+      }
+    })
+    if (error) throw error
+    return { data }
+  },
+
+  login: async (credentials) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: credentials.email,
+      password: credentials.password
+    })
+    if (error) throw error
+    return { data }
+  },
+
+  getProfile: async () => {
+    const { data: { user }, error } = await supabase.auth.getUser()
+    if (error) throw error
+    return { data: user }
+  }
+}
 
 export const progress = {
-  updateProgress: (mantraData) => api.post('/progress/update', mantraData),
-  getAllProgress: () => api.get('/progress/all')
-};
+  updateProgress: async (mantraData) => {
+    const { data, error } = await supabase
+      .from('progress')
+      .upsert({
+        user_id: (await supabase.auth.getUser()).data.user.id,
+        mantra_count: mantraData.count,
+        updated_at: new Date()
+      })
+    if (error) throw error
+    return { data }
+  },
 
-export default api;
+  getAllProgress: async () => {
+    const { data, error } = await supabase
+      .from('progress')
+      .select('*')
+      .eq('user_id', (await supabase.auth.getUser()).data.user.id)
+    if (error) throw error
+    return { data }
+  }
+}

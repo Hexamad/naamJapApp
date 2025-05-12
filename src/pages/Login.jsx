@@ -23,6 +23,26 @@ function Login() {
 
   return (
     <Container maxWidth="sm">
+      {localStorage.getItem('token') && (
+        <Box sx={{ 
+          position: 'absolute',
+          top: 16,
+          right: 16,
+        }}>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/dashboard')}
+            sx={{
+              bgcolor: '#ff9100',
+              '&:hover': {
+                bgcolor: '#ff6d00'
+              }
+            }}
+          >
+            Home
+          </Button>
+        </Box>
+      )}
       <Box sx={{ py: 4 }}>
         <Typography 
           variant="h4" 

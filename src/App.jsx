@@ -9,6 +9,7 @@ import NaamJap from './pages/NaamJap';
 import Progress from './pages/Progress';
 import LanguageSelect from './pages/LanguageSelect';
 import Register from './pages/Register';
+import ProgressDashboard from './pages/ProgressDashboard';  // Add this import
 
 import { 
   Route,
@@ -35,11 +36,26 @@ const router = createBrowserRouter(
       <Route path="naamjap" element={
         localStorage.getItem('token') ? <NaamJap /> : <Navigate to="/login" />
       } />
+      <Route path="dashboard" element={
+        localStorage.getItem('token') ? <ProgressDashboard /> : <Navigate to="/login" />
+      } />
     </Route>
   )
 );
 
+import { useEffect } from 'react'
+import { supabase } from './services/supabase'
+
 function App() {
+  useEffect(() => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        localStorage.setItem('token', session.access_token)
+      } else {
+        localStorage.removeItem('token')
+      }
+    })
+  }, [])
   return <RouterProvider router={router} />;
 }
 

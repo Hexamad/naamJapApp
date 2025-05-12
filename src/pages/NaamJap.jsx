@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Box, Container, Typography, Paper, Button, Grid } from '@mui/material';
 import { orange } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
-import { progress } from '../services/api';
+// Remove this line since we're not using it anymore
+// import { progress } from '../services/api';
+import { supabase } from '../services/supabase';
 
 function NaamJap() {
   const navigate = useNavigate();  // Add this line at the top
@@ -53,33 +55,118 @@ function NaamJap() {
   }, [mantraText]);
 
   useEffect(() => {
-    // Save progress whenever count changes
+    let timeoutId;
     const saveProgress = async () => {
       try {
-        await progress.updateProgress({
-          mantraName: mantraText,
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        
+        if (userError) {
+          console.error('User authentication error:', {
+            error: userError,
+            message: userError.message,
+            status: userError.status
+          });
+          return;
+        }
+
+        if (!user) {
+          throw new Error('No authenticated user found');
+        }
+
+        // Log the data being sent
+        console.log('Attempting to save progress:', {
+          user_id: user.id,
+          mantra_name: mantraText,
           count: count
         });
+
+        const { data, error } = await supabase
+          .from('progress')
+          .upsert({
+            user_id: user.id,
+            mantra_name: mantraText,
+            count: count,
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'user_id,mantra_name',
+            returning: 'minimal' // Add this for better performance
+          });
+
+        if (error) {
+          console.error('Supabase upsert error:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            status: error?.status || 'unknown',
+            statusText: error?.statusText || 'unknown'
+          });
+          throw error;
+        }
+
+        console.log('Progress saved successfully');
       } catch (error) {
-        console.error('Failed to save progress:', error);
+        console.error('Failed to save progress:', {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+          status: error?.status,
+          response: error?.response,
+          request: error?.request
+        });
       }
     };
 
     if (count > 0) {
-      saveProgress();
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(saveProgress, 2000);
     }
+
+    return () => clearTimeout(timeoutId);
   }, [count, mantraText]);
 
   const handlePause = async () => {
     try {
-      await progress.updateProgress({
-        mantraName: mantraText,
-        count: count
-      });
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      
+      if (userError) {
+        console.error('User authentication error:', userError);
+        return;
+      }
+
+      if (!user) {
+        throw new Error('No authenticated user found');
+      }
+
+      const { data, error } = await supabase
+        .from('progress')
+        .upsert({
+          user_id: user.id,
+          mantra_name: mantraText,
+          count: count,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id,mantra_name'
+        });
+
+      if (error) {
+        console.error('Supabase upsert error:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        throw error;
+      }
+
       setIsPaused(true);
       navigate('/progress');
     } catch (error) {
-      console.error('Failed to save progress:', error);
+      console.error('Failed to save progress:', {
+        name: error.name,
+        message: error.message,
+        stack: error.stack,
+        details: JSON.stringify(error, null, 2)
+      });
     }
   };
 
@@ -89,6 +176,24 @@ function NaamJap() {
 
   return (
     <Container maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <Box sx={{ 
+        position: 'absolute',
+        top: 16,
+        right: 16,
+      }}>
+        <Button
+          variant="contained"
+          onClick={() => navigate('/dashboard')}
+          sx={{
+            bgcolor: '#ff9100',
+            '&:hover': {
+              bgcolor: '#ff6d00'
+            }
+          }}
+        >
+          Home
+        </Button>
+      </Box>
       <Box sx={{ py: { xs: 2, sm: 4 }, mt: { xs: 4, sm: 6 } }}>
         <Typography 
           variant="h4" 
